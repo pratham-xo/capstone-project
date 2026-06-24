@@ -40,10 +40,18 @@ module "ecr" {
 module "codedeploy" {
   source = "./modules/codedeploy"
 
-  ecs_cluster_name      = module.ecs.ecs_cluster_name
-  ecs_service_name      = module.ecs.ecs_service_name
-  listener_arn          = module.alb.listener_arn
-  blue_target_group_name = "ecs-target-group"
+  ecs_cluster_name        = module.ecs.ecs_cluster_name
+  ecs_service_name        = module.ecs.ecs_service_name
+  listener_arn            = module.alb.listener_arn
+  blue_target_group_name  = "ecs-target-group"
   green_target_group_name = "green-target-group"
 }
 
+module "codebuild" {
+  source = "./modules/codebuild"
+
+  ecr_repository_url  = module.ecr.ecr_repository_url
+  ecr_repository_name = module.ecr.ecr_repository_name
+  github_repo_url     = "https://github.com/pratham-xo/capstone-project.git"
+
+}

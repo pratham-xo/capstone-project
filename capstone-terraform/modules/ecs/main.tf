@@ -65,8 +65,8 @@ resource "aws_ecs_task_definition" "ecs_task" {
 
   container_definitions = jsonencode([
     {
-      name = "starbucks-container"
-      image = "723951822972.dkr.ecr.ap-south-1.amazonaws.com/capstone-ecr:v1"
+      name      = "starbucks-container"
+      image     = "723951822972.dkr.ecr.ap-south-1.amazonaws.com/capstone-ecr:v1"
       essential = true
 
       portMappings = [
@@ -90,8 +90,8 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type = "FARGATE"
 
   deployment_controller {
-  type = "CODE_DEPLOY"
-}
+    type = "CODE_DEPLOY"
+  }
 
   network_configuration {
     subnets = [
@@ -105,7 +105,7 @@ resource "aws_ecs_service" "ecs_service" {
 
     assign_public_ip = false
   }
-  
+
 
   load_balancer {
     target_group_arn = var.target_group_arn
