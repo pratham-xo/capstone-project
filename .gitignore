@@ -1,0 +1,21 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# Node
+node_modules/
+
+# Logs
+*.log
+
+# Mac
+.DS_Store
+
+# build
+build/
+
+# envs
+.env
+.env.*
