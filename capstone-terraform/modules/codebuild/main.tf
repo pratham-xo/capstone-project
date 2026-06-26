@@ -60,7 +60,21 @@ resource "aws_iam_policy" "codebuild_policy" {
         ]
 
         Resource = "*"
-      }
+      },
+      {
+  Effect = "Allow"
+
+  Action = [
+    "s3:GetObject",
+    "s3:GetObjectVersion",
+    "s3:GetBucketLocation"
+  ]
+
+  Resource = [
+    "arn:aws:s3:::capstone-pipeline-artifacts-*",
+    "arn:aws:s3:::capstone-pipeline-artifacts-*/*"
+  ]
+}
     ]
   })
 }

@@ -55,3 +55,16 @@ module "codebuild" {
   github_repo_url     = "https://github.com/pratham-xo/capstone-project.git"
 
 }
+
+module "codepipeline" {
+
+  source = "./modules/codepipeline"
+
+  connection_arn = "arn:aws:codeconnections:ap-south-1:723951822972:connection/50d31142-f46e-491a-8247-a623a933b84a"
+
+  repository_owner = "pratham-xo"
+  repository_name  = "capstone-project"
+  branch_name      = "main"
+
+  codebuild_project_name = module.codebuild.codebuild_project_name
+}
