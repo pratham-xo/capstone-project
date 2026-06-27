@@ -32,6 +32,16 @@ phases:
 
     - sonar-scanner --version
 
+    - echo "Installing Trivy..."
+
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+
+    - mv ./bin/trivy /usr/local/bin/
+
+    - trivy --version
+    - echo "Downloading Trivy vulnerability database..."
+    - trivy image --download-db-only
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -56,6 +66,14 @@ phases:
 
     - echo "Build started on $(date)"
     - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+    - echo "Running Trivy scan..."
+
+    - |
+         trivy image \
+          --exit-code 1 \
+          --severity HIGH,CRITICAL \
+          $IMAGE_REPO_NAME:$IMAGE_TAG
+
     - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
