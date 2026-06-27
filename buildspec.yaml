@@ -3,7 +3,7 @@ version: 0.2
 phases:
 
   install:
-  commands:
+    commands:
     - echo Installing SonarScanner...
 
     - curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.1.0.6389.zip
