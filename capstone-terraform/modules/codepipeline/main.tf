@@ -74,11 +74,31 @@ resource "aws_codepipeline" "pipeline" {
 
   name     = "capstone-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
+  pipeline_type = "V2"
 
   artifact_store {
     location = aws_s3_bucket.pipeline_bucket.bucket
     type     = "S3"
   }
+
+  trigger {
+
+  provider_type = "CodeStarSourceConnection"
+
+  git_configuration {
+
+    source_action_name = "Source"
+
+    push {
+
+      branches {
+
+        includes = ["main"]
+
+      }
+    }
+  }
+}
 
   stage {
 

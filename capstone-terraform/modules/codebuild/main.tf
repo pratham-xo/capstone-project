@@ -74,6 +74,16 @@ resource "aws_iam_policy" "codebuild_policy" {
     "arn:aws:s3:::capstone-pipeline-artifacts-*",
     "arn:aws:s3:::capstone-pipeline-artifacts-*/*"
   ]
+},
+{
+  Effect = "Allow"
+
+  Action = [
+    "ssm:GetParameter",
+    "kms:Decrypt"
+  ]
+
+  Resource = "arn:aws:ssm:ap-south-1:723951822972:parameter/sonarqube/token"
 }
     ]
   })
@@ -120,6 +130,10 @@ resource "aws_codebuild_project" "capstone_build" {
       name  = "REPOSITORY_URI"
       value = var.ecr_repository_url
     }
+    environment_variable {
+  name  = "SONAR_HOST_URL"
+  value = "http://13.232.73.13:9000"
+}
   }
 
   logs_config {

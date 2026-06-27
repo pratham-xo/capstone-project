@@ -1,6 +1,14 @@
 version: 0.2
 
 phases:
+
+  install:
+    commands:
+      - echo Installing SonarScanner...
+      - curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.1.0.4889-linux-x64.zip
+      - unzip -q sonar-scanner.zip
+      - export PATH=$PATH:$PWD/sonar-scanner-7.1.0.4889-linux-x64/bin
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -8,8 +16,21 @@ phases:
       - ECR_REGISTRY=$(echo $REPOSITORY_URI | cut -d'/' -f1)
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
 
+      - echo Retrieving SonarQube token from SSM...
+      - export SONAR_TOKEN=$(aws ssm get-parameter --name "/sonarqube/token" --with-decryption --query Parameter.Value --output text)
+
   build:
     commands:
+      commands:
+      - echo Running SonarQube Scan...
+      - 
+        sonar-scanner \
+          -Dsonar.projectKey=capstone-project \
+          -Dsonar.projectName="Capstone Project" \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=$SONAR_HOST_URL \
+          -Dsonar.token=$SONAR_TOKEN
+
       - echo "Build started on $(date)"
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG

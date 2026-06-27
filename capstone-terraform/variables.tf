@@ -25,3 +25,11 @@ variable "db_subnet1_cidr" {
 variable "db_subnet2_cidr" {
 
 }
+
+variable "key_name" {
+
+}
+
+variable "sonarqube_token" {
+  
+}

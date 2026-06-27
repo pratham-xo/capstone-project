@@ -53,18 +53,30 @@ module "codebuild" {
   ecr_repository_url  = module.ecr.ecr_repository_url
   ecr_repository_name = module.ecr.ecr_repository_name
   github_repo_url     = "https://github.com/pratham-xo/capstone-project.git"
-
 }
 
 module "codepipeline" {
 
   source = "./modules/codepipeline"
 
-  connection_arn = "arn:aws:codeconnections:ap-south-1:723951822972:connection/50d31142-f46e-491a-8247-a623a933b84a"
+  connection_arn = "arn:aws:codeconnections:ap-south-1:723951822972:connection/91267830-9409-4ced-bd37-1b27d34c3a39"
 
   repository_owner = "pratham-xo"
   repository_name  = "capstone-project"
   branch_name      = "main"
 
   codebuild_project_name = module.codebuild.codebuild_project_name
+}
+
+module "sonarqube" {
+  source = "./modules/ec2-sonarcube"
+
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.vpc.aws_public_subnet1
+  key_name         = var.key_name
+}
+
+module "ssm" {
+  source = "./modules/ssm_parameter_store"
+  sonarqube_token = var.sonarqube_token
 }
