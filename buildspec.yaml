@@ -4,13 +4,31 @@ phases:
 
   install:
     commands:
-    - echo Installing SonarScanner...
+    - echo "Downloading SonarScanner..."
 
     - curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.1.0.6389.zip
 
     - unzip sonar-scanner.zip
 
-    - export PATH=$PATH:$PWD/sonar-scanner-8.1.0.6389-linux-x64/bin
+    - echo "Current directory:"
+    - pwd
+
+    - echo "Files:"
+    - ls -la
+
+    - echo "Directories:"
+    - find . -maxdepth 2 -type d
+
+    - echo "Searching for sonar-scanner binary..."
+    - find . -name sonar-scanner
+
+    - chmod +x $(find . -name sonar-scanner)
+
+    - export PATH=$PATH:$(dirname $(find . -name sonar-scanner))
+
+    - echo $PATH
+
+    - which sonar-scanner
 
     - sonar-scanner --version
 
