@@ -132,7 +132,7 @@ resource "aws_codebuild_project" "capstone_build" {
     }
     environment_variable {
   name  = "SONAR_HOST_URL"
-  value = "http://13.232.73.13:9000"
+  value = "http://13.206.80.136:9000"
 }
   }
 

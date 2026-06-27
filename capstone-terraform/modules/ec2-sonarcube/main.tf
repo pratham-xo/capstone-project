@@ -1,6 +1,6 @@
 resource "aws_instance" "sonarqube" {
   ami = "ami-0ad2f19099a5db666"
-  instance_type = "t3.small"
+  instance_type = "t3.medium"
   subnet_id = var.public_subnet_id
 
 
