@@ -3,11 +3,16 @@ version: 0.2
 phases:
 
   install:
-    commands:
-      - echo Installing SonarScanner...
-      - curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.1.0.4889-linux-x64.zip
-      - unzip -q sonar-scanner.zip
-      - export PATH=$PATH:$PWD/sonar-scanner-7.1.0.4889-linux-x64/bin
+  commands:
+    - echo "Installing SonarScanner..."
+
+    - curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-8.1.0.6389.zip
+
+    - unzip sonar-scanner.zip
+
+    - export PATH=$PATH:$PWD/sonar-scanner-8.1.0.6389-linux-x64/bin
+
+    - sonar-scanner --version
 
   pre_build:
     commands:
