@@ -22,7 +22,8 @@ resource "aws_iam_role" "codepipeline_role" {
       }
 
       Action = "sts:AssumeRole"
-    }]
+    },
+    ]
   })
 }
 
@@ -75,6 +76,25 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     "codedeploy:GetDeployment",
     "codedeploy:GetDeploymentGroup",
     "codedeploy:RegisterApplicationRevision"
+  ]
+
+  Resource = "*"
+},
+{
+  Effect = "Allow"
+
+  Action = [
+    "ecs:RegisterTaskDefinition",
+    "ecs:DescribeTaskDefinition"
+  ]
+
+  Resource = "*"
+},
+{
+  Effect = "Allow"
+
+  Action = [
+    "iam:PassRole"
   ]
 
   Resource = "*"
