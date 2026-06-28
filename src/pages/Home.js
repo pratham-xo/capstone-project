@@ -13,11 +13,13 @@ import { Navigation } from 'swiper';
 
 const Home = () => {
   return (
-    <>
-      <div className="bg-[#1e3932] w-100 sm:mt-0 sm:top-[220px] sm:mb-56 md:mt-1 md:top-[220px] md:mb-56 lg:top-[84px] relative lg:mb-20 md:pl-24 p-7 md:pr-28 flex flex-col items-center justify-between  sm:flex-row lg:flex-row ">
+    <><div className="bg-[#00C853] w-100 sm:mt-0 sm:top-[220px] sm:mb-56 md:mt-1 md:top-[220px] md:mb-56 lg:top-[84px] relative lg:mb-20 md:pl-24 p-7 md:pr-28 flex flex-col items-center justify-between sm:flex-row lg:flex-row">
         <div>
-          <span className="text-white md:text-2xl sm:text-base sm:font-s_bold md:font-Light text-center">Rewards are pouring! Sign up now.</span>
-        </div>
+	  <span className="text-white md:text-2xl sm:text-base sm:font-s_bold md:font-Light text-center">
+  🚀 Blue-Green Deployment Successful - Version Green
+</span>
+	  </div>
+	  </div>
         <div>
           <button className="text-white text-sm border-white border-2 p-1 px-3 rounded-3xl mt-2 md:mt-0 cursor-pointer">Know More</button>
         </div>
