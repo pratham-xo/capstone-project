@@ -58,7 +58,16 @@ resource "aws_iam_role_policy" "codedeploy_ecs_policy" {
           "s3:GetObjectVersion"
         ]
         Resource = "*"
-      }
+      },
+      {
+  Effect = "Allow"
+
+  Action = [
+    "iam:PassRole"
+  ]
+
+  Resource = "*"
+}
     ]
   })
 }

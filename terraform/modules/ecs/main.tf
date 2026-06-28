@@ -27,6 +27,11 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_cloudwatch_log_group" "ecs_logs" {
+  name              = "/ecs/capstone-task"
+  retention_in_days = 7
+}
+
 resource "aws_security_group" "ecs_sg" {
   name   = "ecs-sg"
   vpc_id = var.vpc_id
@@ -57,7 +62,7 @@ resource "aws_ecs_task_definition" "ecs_task" {
   memory = "512"
 
   runtime_platform {
-    cpu_architecture        = "ARM64"
+    cpu_architecture        = "X86_64"
     operating_system_family = "LINUX"
   }
 
@@ -75,6 +80,15 @@ resource "aws_ecs_task_definition" "ecs_task" {
           protocol      = "tcp"
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = "/ecs/capstone-task"
+          "awslogs-region"        = "ap-south-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
+      
     }
   ])
 }
@@ -92,6 +106,12 @@ resource "aws_ecs_service" "ecs_service" {
   deployment_controller {
     type = "CODE_DEPLOY"
   }
+  lifecycle {
+  ignore_changes = [
+    task_definition,
+    desired_count
+  ]
+}
 
   network_configuration {
     subnets = [

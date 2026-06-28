@@ -67,15 +67,19 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 
         Resource = var.connection_arn
       },
-      {
+     {
   Effect = "Allow"
 
   Action = [
     "codedeploy:CreateDeployment",
     "codedeploy:GetApplication",
+    "codedeploy:GetApplicationRevision",
     "codedeploy:GetDeployment",
     "codedeploy:GetDeploymentGroup",
-    "codedeploy:RegisterApplicationRevision"
+    "codedeploy:GetDeploymentConfig",
+    "codedeploy:RegisterApplicationRevision",
+    "codedeploy:ListDeployments",
+    "codedeploy:StopDeployment"
   ]
 
   Resource = "*"
@@ -85,7 +89,10 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 
   Action = [
     "ecs:RegisterTaskDefinition",
-    "ecs:DescribeTaskDefinition"
+    "ecs:DescribeTaskDefinition",
+    "ecs:DescribeServices",
+    "ecs:DescribeTaskSets",
+    "ecs:DescribeClusters"
   ]
 
   Resource = "*"
