@@ -21,10 +21,10 @@ const Home = () => {
 	  </div>
 	  </div>
         <div>
-          <button className="text-white text-sm border-white border-2 p-1 px-3 rounded-3xl mt-2 md:mt-0 cursor-pointer">Know More</button>
+          <button className="text-white text-sm border-white border-2 p-1 px-3 rounded-3xl mt-2 md:mt-0 cursor-pointer">
+            Know More
+            </button>
         </div>
-      </div>
-
       {/* Handcrafted Curations */}
       <div className="bg-white py-7 w-100">
         <div className="md:pl-24  md:pr-28">
