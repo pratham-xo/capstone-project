@@ -67,7 +67,8 @@ resource "aws_iam_policy" "codebuild_policy" {
   Action = [
     "s3:GetObject",
     "s3:GetObjectVersion",
-    "s3:GetBucketLocation"
+    "s3:GetBucketLocation",
+    "s3:PutObject"
   ]
 
   Resource = [
