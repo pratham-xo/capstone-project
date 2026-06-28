@@ -79,5 +79,16 @@ phases:
     commands:
       - echo Pushing image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+
+      - echo Creating imageDetail.json...
+      - printf '{"ImageURI":"%s"}' "$REPOSITORY_URI:$IMAGE_TAG" > imageDetail.json
+
       - echo "Build completed on $(date)"
       - echo Image pushed as $IMAGE_TAG
+
+  artifacts:
+    files:  
+      - appspec.yaml
+      - taskdef.json
+      - imageDetail.json
+

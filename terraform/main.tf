@@ -40,9 +40,10 @@ module "ecr" {
 module "codedeploy" {
   source = "./modules/codedeploy"
 
-  ecs_cluster_name        = module.ecs.ecs_cluster_name
-  ecs_service_name        = module.ecs.ecs_service_name
-  listener_arn            = module.alb.listener_arn
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  ecs_service_name = module.ecs.ecs_service_name
+  listener_arn    = module.alb.listener_arn
+  test_listener_arn =  module.alb.test_listener_arn
   blue_target_group_name  = "ecs-target-group"
   green_target_group_name = "green-target-group"
 }
@@ -66,6 +67,8 @@ module "codepipeline" {
   branch_name      = "main"
 
   codebuild_project_name = module.codebuild.codebuild_project_name
+  codedeploy_app_name = module.codedeploy.codedeploy_app_name
+  codedeploy_deployment_group_name = module.codedeploy.deployment_group_name
 }
 
 module "sonarqube" {

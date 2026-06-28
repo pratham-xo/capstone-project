@@ -106,6 +106,9 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
       prod_traffic_route {
         listener_arns = [var.listener_arn]
       }
+      test_traffic_route {
+        listener_arns = [var.test_listener_arn]
+      }
       target_group {
         name = var.blue_target_group_name
       }

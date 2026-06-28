@@ -10,6 +10,11 @@ output "listener_arn" {
   value = aws_lb_listener.http_listener.arn
 }
 
+output "test_listener_arn" {
+  value = aws_lb_listener.test_listener.arn
+  
+}
+
 output "alb_dns_name" {
   value = aws_lb.ALB.dns_name
 }

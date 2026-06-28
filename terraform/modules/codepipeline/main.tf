@@ -65,7 +65,20 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
         ]
 
         Resource = var.connection_arn
-      }
+      },
+      {
+  Effect = "Allow"
+
+  Action = [
+    "codedeploy:CreateDeployment",
+    "codedeploy:GetApplication",
+    "codedeploy:GetDeployment",
+    "codedeploy:GetDeploymentGroup",
+    "codedeploy:RegisterApplicationRevision"
+  ]
+
+  Resource = "*"
+}
     ]
   })
 }
@@ -135,10 +148,41 @@ resource "aws_codepipeline" "pipeline" {
       version          = "1"
 
       input_artifacts  = ["source_output"]
+      output_artifacts = [ "build_output" ]
 
       configuration = {
         ProjectName = var.codebuild_project_name
       }
     }
   }
+
+  stage {
+
+  name = "Deploy"
+
+  action {
+
+    name     = "DeployToECS"
+    category = "Deploy"
+    owner    = "AWS"
+    provider = "CodeDeployToECS"
+    version  = "1"
+
+    input_artifacts = ["build_output"]
+
+    configuration = {
+      ApplicationName                = var.codedeploy_app_name
+      DeploymentGroupName            = var.codedeploy_deployment_group_name
+
+      TaskDefinitionTemplateArtifact = "build_output"
+      TaskDefinitionTemplatePath     = "taskdef.json"
+
+      AppSpecTemplateArtifact        = "build_output"
+      AppSpecTemplatePath            = "appspec.yaml"
+
+      Image1ArtifactName             = "build_output"
+      Image1ContainerName            = "IMAGE1_NAME"
+    }
+  }
+}
 }

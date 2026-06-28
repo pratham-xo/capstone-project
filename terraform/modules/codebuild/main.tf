@@ -100,12 +100,12 @@ resource "aws_codebuild_project" "capstone_build" {
   service_role = aws_iam_role.codebuild_role.arn
 
   artifacts {
-    type = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   source {
-    type     = "GITHUB"
-    location = var.github_repo_url
+    type     = "CODEPIPELINE"
+    buildspec = "buildspec.yaml"
   }
 
   environment {
