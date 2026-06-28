@@ -86,9 +86,9 @@ phases:
       - echo "Build completed on $(date)"
       - echo Image pushed as $IMAGE_TAG
 
-  artifacts:
-    files:  
-      - appspec.yaml
-      - taskdef.json
-      - imageDetail.json
+artifacts:
+  files:  
+    - appspec.yaml
+    - taskdef.json
+    - imageDetail.json
 
