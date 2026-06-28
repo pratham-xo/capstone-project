@@ -28,7 +28,7 @@ function App() {
           fontSize: "18px"
         }}
       >
-        🚀 Blue-Green Deployment Demo - Version 2
+        🚀 Blue-Green Deployment Demo - Version green
       </div>
           <Header/>
       <Routes>
