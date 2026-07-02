@@ -16,7 +16,7 @@ const Home = () => {
     <><div className="bg-[#00C853] w-100 sm:mt-0 sm:top-[220px] sm:mb-56 md:mt-1 md:top-[220px] md:mb-56 lg:top-[84px] relative lg:mb-20 md:pl-24 p-7 md:pr-28 flex flex-col items-center justify-between sm:flex-row lg:flex-row">
         <div>
 	  <span className="text-white md:text-2xl sm:text-base sm:font-s_bold md:font-Light text-center">
-  🚀 New-Green Deployment Successful - Version Green
+  🚀 New-Green Deployment Successful - Version New Green
 </span>
 	  </div>
 	  </div>
