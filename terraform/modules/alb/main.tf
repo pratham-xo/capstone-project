@@ -93,5 +93,10 @@ resource "aws_lb_listener" "test_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.green_target_group.arn
   }
+  lifecycle {
+    ignore_changes = [
+      default_action
+    ]
+  }
 }
 
