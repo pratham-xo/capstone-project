@@ -3,3 +3,4 @@ node_modules
 .gitignore
 build
 npm-debug.log
+terraform

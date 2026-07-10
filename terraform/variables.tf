@@ -33,3 +33,11 @@ variable "key_name" {
 variable "sonarqube_token" {
   
 }
+
+variable "my_ip" {
+  
+}
+
+variable "SONAR_HOST_URL" {
+  
+}

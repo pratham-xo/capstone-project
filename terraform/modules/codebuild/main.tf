@@ -49,17 +49,18 @@ resource "aws_iam_policy" "codebuild_policy" {
           "ecr:BatchGetImage"
         ]
 
-        Resource = "*"
+        Resource = "arn:aws:ecr:ap-south-1:723951822972:repository/capstone-ecr"
       },
 
       {
         Effect = "Allow"
 
         Action = [
-          "logs:*"
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
         ]
 
-        Resource = "*"
+        Resource = "arn:aws:logs:ap-south-1:723951822972:log-group:/aws/codebuild/capstone-build:*"
       },
       {
   Effect = "Allow"
@@ -81,7 +82,6 @@ resource "aws_iam_policy" "codebuild_policy" {
 
   Action = [
     "ssm:GetParameter",
-    "kms:Decrypt"
   ]
 
   Resource = "arn:aws:ssm:ap-south-1:723951822972:parameter/sonarqube/token"
@@ -95,11 +95,15 @@ resource "aws_iam_role_policy_attachment" "codebuild_role_policy_attachment" {
   policy_arn = aws_iam_policy.codebuild_policy.arn
 }
 
-resource "aws_codebuild_project" "capstone_build" {
+resource "aws_cloudwatch_log_group" "codebuild" {
+  name              = "/aws/codebuild/capstone-build"
+  retention_in_days = 30
+}
 
+resource "aws_codebuild_project" "capstone_build" {
   name         = "capstone-build"
   service_role = aws_iam_role.codebuild_role.arn
-
+  
   artifacts {
     type = "CODEPIPELINE"
   }
@@ -133,7 +137,7 @@ resource "aws_codebuild_project" "capstone_build" {
     }
     environment_variable {
   name  = "SONAR_HOST_URL"
-  value = "http://13.206.80.136:9000"
+  value = var.SONAR_HOST_URL
 }
   }
 

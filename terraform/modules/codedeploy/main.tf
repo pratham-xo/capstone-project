@@ -15,66 +15,10 @@ resource "aws_iam_role" "codedeploy_role" {
     ]
   })
 }
-resource "aws_iam_role_policy" "codedeploy_ecs_policy" {
-  name = "codedeploy-ecs-policy"
-  role = aws_iam_role.codedeploy_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
-      {
-        Effect = "Allow"
-
-        Action = [
-          "ecs:DescribeServices",
-          "ecs:DescribeTaskDefinition",
-          "ecs:CreateTaskSet",
-          "ecs:UpdateServicePrimaryTaskSet",
-          "ecs:DeleteTaskSet"
-        ]
-
-        Resource = "*"
-      },
-
-      {
-        Effect = "Allow"
-
-        Action = [
-          "elasticloadbalancing:*"
-        ]
-
-        Resource = "*"
-      },
-
-      {
-        Effect = "Allow"
-
-        Action = [
-          "lambda:InvokeFunction",
-          "cloudwatch:DescribeAlarms",
-          "sns:Publish",
-          "s3:GetObject",
-          "s3:GetObjectVersion"
-        ]
-        Resource = "*"
-      },
-      {
-  Effect = "Allow"
-
-  Action = [
-    "iam:PassRole"
-  ]
-
-  Resource = "*"
-}
-    ]
-  })
-}
 
 resource "aws_iam_role_policy_attachment" "codedeploy_role_policy" {
   role       = aws_iam_role.codedeploy_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
 }
 
 resource "aws_codedeploy_app" "ecs_app" {
@@ -95,6 +39,19 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
     deployment_option = "WITH_TRAFFIC_CONTROL"
   }
 
+  auto_rollback_configuration {
+    enabled = true
+    events  = ["DEPLOYMENT_FAILURE",
+    "DEPLOYMENT_STOP_ON_ALARM",
+    "DEPLOYMENT_STOP_ON_REQUEST"
+    ]
+  }
+
+  alarm_configuration {
+    enabled = true
+    alarms  = [var.cloudwatch_alarm]
+  }
+
   ecs_service {
     cluster_name = var.ecs_cluster_name
     service_name = var.ecs_service_name
@@ -106,7 +63,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
     }
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 5
+      termination_wait_time_in_minutes = 60
     }
   }
 

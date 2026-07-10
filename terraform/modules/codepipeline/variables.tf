@@ -1,26 +1,44 @@
 variable "connection_arn" {
-  type = string
+  
 }
 
 variable "repository_owner" {
-  type = string
+  
 }
 
 variable "repository_name" {
-  type = string
+  
 }
 
 variable "branch_name" {
-  type = string
+  
 }
 
 variable "codebuild_project_name" {
-  type = string
+  
 }
 
 variable "codedeploy_app_name" {
-  type = string 
+  
 }
 variable "codedeploy_deployment_group_name" {
-  type = string
+  
+}
+variable "codedeploy_arn" {
+  
+}
+
+variable "codebuild_arn" {
+  
+}
+
+variable "codedeploy_deployment_group_arn" {
+  
+}
+
+variable "codedeploy_app_arn" {
+  
+}
+variable "ecs_task_execution_role_arn" {
+  
 }

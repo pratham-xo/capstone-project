@@ -33,7 +33,7 @@ resource "aws_security_group" "sonarqube_sg" {
     to_port   = 22
     protocol  = "tcp"
 
-    cidr_blocks = ["0.0.0.0/0"] # Restrict to your IP later
+    cidr_blocks = [var.my_ip] # Restrict to your IP later
   }
 
   ingress {

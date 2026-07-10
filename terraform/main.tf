@@ -42,10 +42,14 @@ module "codedeploy" {
 
   ecs_cluster_name = module.ecs.ecs_cluster_name
   ecs_service_name = module.ecs.ecs_service_name
+  ecs_service_arn = module.ecs.ecs_service_arn
+  task_definition_arn = module.ecs.task_definition_arn
   listener_arn    = module.alb.listener_arn
   test_listener_arn =  module.alb.test_listener_arn
   blue_target_group_name  = "ecs-target-group"
   green_target_group_name = "green-target-group"
+  cloudwatch_alarm = module.cloudwatch.alarm_name
+  s3_bucket_arn = module.codepipeline.s3_bucket_arn
 }
 
 module "codebuild" {
@@ -54,6 +58,7 @@ module "codebuild" {
   ecr_repository_url  = module.ecr.ecr_repository_url
   ecr_repository_name = module.ecr.ecr_repository_name
   github_repo_url     = "https://github.com/pratham-xo/capstone-project.git"
+  SONAR_HOST_URL = var.SONAR_HOST_URL
 }
 
 module "codepipeline" {
@@ -69,6 +74,11 @@ module "codepipeline" {
   codebuild_project_name = module.codebuild.codebuild_project_name
   codedeploy_app_name = module.codedeploy.codedeploy_app_name
   codedeploy_deployment_group_name = module.codedeploy.deployment_group_name
+  codedeploy_arn = module.codedeploy.codedeploy_arn 
+  codebuild_arn = module.codebuild.codebuild_arn
+  codedeploy_deployment_group_arn = module.codedeploy.codedeploy_deployment_group_arn
+  codedeploy_app_arn = module.codedeploy.codedeploy_arn
+  ecs_task_execution_role_arn = module.ecs.task_execution_arn
 }
 
 module "sonarqube" {
@@ -77,9 +87,19 @@ module "sonarqube" {
   vpc_id           = module.vpc.vpc_id
   public_subnet_id = module.vpc.aws_public_subnet1
   key_name         = var.key_name
+  my_ip = var.my_ip
 }
 
 module "ssm" {
   source = "./modules/ssm_parameter_store"
   sonarqube_token = var.sonarqube_token
+}
+
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+  ALB_arn_suffix = module.alb.alb_suffix
+  target_group_arn_suffix = module.alb.target_group_arn_suffix
+  cluster_name = module.ecs.ecs_cluster_name
+  service_name = module.ecs.ecs_service_name
+  green_target_group_arn_suffix = module.alb.green_target_group_arn_suffix
 }

@@ -15,5 +15,5 @@ variable "private_subnet2" {
 }
 
 variable "target_group_arn" {
-  type = string
+
 }

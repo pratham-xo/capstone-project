@@ -9,3 +9,11 @@ variable "test_listener_arn" {}
 variable "blue_target_group_name" {}
 
 variable "green_target_group_name" {}
+
+variable "cloudwatch_alarm" {}
+
+variable "ecs_service_arn" {}
+
+variable "task_definition_arn" {}
+
+variable "s3_bucket_arn" {}
