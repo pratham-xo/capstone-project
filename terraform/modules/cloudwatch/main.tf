@@ -117,7 +117,7 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
         }
       ],[
     {
-      expression = "MAX([blue,green])"
+      expression = "MAX([Blue,Green])"
       label      = "Production Healthy Hosts"
       id         = "prod"
     }
