@@ -17,11 +17,3 @@ variable "ecs_service_arn" {}
 variable "task_definition_arn" {}
 
 variable "s3_bucket_arn" {}
-
-variable "alb_arn_suffix" {
-  
-}
-
-variable "blue_target_group" {
-  
-}

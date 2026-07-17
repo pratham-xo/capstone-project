@@ -50,8 +50,6 @@ module "codedeploy" {
   green_target_group_name = "green-target-group"
   cloudwatch_alarm = module.cloudwatch.alarm_name
   s3_bucket_arn = module.codepipeline.s3_bucket_arn
-  alb_arn_suffix = module.alb.alb_suffix
-  blue_target_group = module.alb.target_group_arn_suffix
 }
 
 module "codebuild" {

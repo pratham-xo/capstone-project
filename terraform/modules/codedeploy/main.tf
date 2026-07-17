@@ -41,7 +41,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
 
   alarm_configuration {
     enabled = true
-    alarms  = [aws_cloudwatch_metric_alarm.green_tg_unhealthy.alarm_name]
+    alarms  = [var.cloudwatch_alarm]
   }
 
   auto_rollback_configuration {
@@ -86,18 +86,3 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
 
 }
 
-resource "aws_cloudwatch_metric_alarm" "green_tg_unhealthy" {
-  alarm_name          = "ecs-green-tg-unhealthy-hosts"
-  comparison_operator = "GreaterThanOrEqualToThreshold"
-  evaluation_periods  = 1
-  metric_name         = "UnHealthyHostCount"
-  namespace           = "AWS/ApplicationELB"
-  period              = 60 # 1 minute
-  statistic           = "Average"
-  threshold           = 1
-
-  dimensions = {
-    TargetGroup  = var.blue_target_group
-    LoadBalancer = var.alb_arn_suffix
-  }
-}
