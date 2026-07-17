@@ -41,3 +41,7 @@ variable "my_ip" {
 variable "SONAR_HOST_URL" {
   
 }
+
+variable "alert_email" {
+  
+}

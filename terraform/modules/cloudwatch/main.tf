@@ -115,8 +115,14 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
         {
           label = "Green"
         }
-      ]
-    ]
+      ],[
+    {
+      expression = "MAX([blue,green])"
+      label      = "Production Healthy Hosts"
+      id         = "prod"
+    }
+  ]
+]
   }
 },
 
@@ -188,6 +194,10 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   statistic = "Sum"
   period = 60
 
+  alarm_actions = [ aws_sns_topic.alerts.arn ]
+
+  ok_actions = [ aws_sns_topic.alerts.arn ]
+
   dimensions = {
     LoadBalancer = var.ALB_arn_suffix
   }
@@ -203,6 +213,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs_cpu_high" {
   period              = 300
   statistic           = "Average"
   threshold           = 80
+
+  alarm_actions = [ aws_sns_topic.alerts.arn ]
+
+  ok_actions = [ aws_sns_topic.alerts.arn ]
 
   dimensions = {
     ClusterName = var.cluster_name
@@ -224,6 +238,10 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_high" {
   statistic           = "Average"
   threshold           = 80
 
+  alarm_actions = [ aws_sns_topic.alerts.arn ]
+
+  ok_actions = [ aws_sns_topic.alerts.arn ]
+
   dimensions = {
     ClusterName = var.cluster_name
     ServiceName = var.service_name
@@ -232,4 +250,14 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_high" {
   alarm_description = "Alarm when ECS Memory exceeds 80%"
 
   treat_missing_data = "notBreaching"
+}
+
+resource "aws_sns_topic" "alerts" {
+  name = "cloudwatch-alerts"
+}
+
+resource "aws_sns_topic_subscription" "email" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email
 }

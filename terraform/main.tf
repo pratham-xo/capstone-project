@@ -102,4 +102,5 @@ module "cloudwatch" {
   cluster_name = module.ecs.ecs_cluster_name
   service_name = module.ecs.ecs_service_name
   green_target_group_arn_suffix = module.alb.green_target_group_arn_suffix
+  alert_email = var.alert_email
 }
