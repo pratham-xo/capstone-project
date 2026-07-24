@@ -101,9 +101,10 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
         var.target_group_arn_suffix,
         "LoadBalancer",
         var.ALB_arn_suffix,
-        {
+         {
+          id    = "m1"
           label = "Blue"
-        }
+        },
       ],
       [
         ".",
@@ -112,12 +113,13 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
         var.green_target_group_arn_suffix,
         "LoadBalancer",
         ".",
-        {
+         {
+          id    = "m2"
           label = "Green"
         }
       ],[
     {
-      expression = "MAX([Blue,Green])"
+      expression = "MAX([m1,m2])"
       label      = "Production Healthy Hosts"
       id         = "prod"
     }

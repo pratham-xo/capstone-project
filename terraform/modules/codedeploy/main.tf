@@ -32,7 +32,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
 
   service_role_arn = aws_iam_role.codedeploy_role.arn
 
-  deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
+  deployment_config_name = "CodeDeployDefault.ECSCanary10Percent5Minutes"
 
   deployment_style {
     deployment_type   = "BLUE_GREEN"
@@ -63,7 +63,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
     }
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 180
+      termination_wait_time_in_minutes = 6
     }
   }
 
