@@ -59,7 +59,7 @@ resource "aws_lb_target_group" "green_target_group" {
 
   health_check {
     enabled             = true
-    path                = "/"
+    path                = "/non-existent-health-check-endpoint"
     protocol            = "HTTP"
     healthy_threshold   = 2
     unhealthy_threshold = 2
