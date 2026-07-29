@@ -14,7 +14,7 @@
   "containerDefinitions": [
     {
       "name": "starbucks-container",
-      "image": "723951822972.dkr.ecr.ap-south-1.amazonaws.com/starbucks:does-not-exist",
+      "image": "IMAGE1_NAME",
       "essential": true,
       "portMappings": [
         {
