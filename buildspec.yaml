@@ -81,10 +81,11 @@ phases:
       - docker push $REPOSITORY_URI:$IMAGE_TAG
 
       - echo Creating imageDetail.json...
-      - printf '{"ImageURI":"%s"}' "$REPOSITORY_URI:$IMAGE_TAG" > imageDetail.json
+      - printf '{"ImageURI":"%s"}' "723951822972.dkr.ecr.ap-south-1.amazonaws.com/starbucks:does-not-exist" > imageDetail.json
 
       - echo "Build completed on $(date)"
       - echo Image pushed as $IMAGE_TAG
+      
 
 artifacts:
   files:  
