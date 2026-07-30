@@ -69,7 +69,7 @@ lifecycle {
     }
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 7
+      termination_wait_time_in_minutes = 8
     }
   }
 
