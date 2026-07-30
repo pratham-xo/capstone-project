@@ -192,7 +192,7 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx" {
   threshold = 5
 
   namespace = "AWS/ApplicationELB"
-  metric_name = "HTTPCode_Target_5XX_Count"
+  metric_name = "HTTPCode_Target_4XX_Count"
   statistic = "Sum"
   period = 60
 
