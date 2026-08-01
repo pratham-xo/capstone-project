@@ -262,17 +262,49 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   threshold           = 0
-  namespace   = "AWS/ApplicationELB"
-  metric_name = "UnHealthyHostCount"
-  statistic   = "Maximum"
-  period      = 60
+  treat_missing_data  = "notBreaching"
+
   alarm_actions = [aws_sns_topic.alerts.arn]
   ok_actions    = [aws_sns_topic.alerts.arn]
-  dimensions = {
-    LoadBalancer = var.ALB_arn_suffix
+
+  metric_query {
+    id          = "e1"
+    expression  = "MAX([m1,m2])"
+    label       = "UnhealthyHosts-EitherTG"
+    return_data = true
   }
-  treat_missing_data = "notBreaching"
+
+  metric_query {
+    id          = "m1"
+    return_data = false
+    metric {
+      metric_name = "UnHealthyHostCount"
+      namespace   = "AWS/ApplicationELB"
+      period      = 60
+      stat        = "Maximum"
+      dimensions = {
+        TargetGroup  = var.target_group_arn_suffix
+        LoadBalancer = var.ALB_arn_suffix
+      }
+    }
+  }
+
+  metric_query {
+    id          = "m2"
+    return_data = false
+    metric {
+      metric_name = "UnHealthyHostCount"
+      namespace   = "AWS/ApplicationELB"
+      period      = 60
+      stat        = "Maximum"
+      dimensions = {
+        TargetGroup  = var.green_target_group_arn_suffix
+        LoadBalancer = var.ALB_arn_suffix
+      }
+    }
+  }
 }
+
 
 resource "aws_sns_topic" "alerts" {
   name = "cloudwatch-alerts"
