@@ -254,6 +254,24 @@ resource "aws_cloudwatch_metric_alarm" "ecs_memory_high" {
   treat_missing_data = "notBreaching"
 }
 
+
+resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
+  alarm_name          = "unhealthy-host-count"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 0
+  namespace   = "AWS/ApplicationELB"
+  metric_name = "UnHealthyHostCount"
+  statistic   = "Maximum"
+  period      = 60
+  alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
+  dimensions = {
+    LoadBalancer = var.ALB_arn_suffix
+  }
+  treat_missing_data = "notBreaching"
+}
+
 resource "aws_sns_topic" "alerts" {
   name = "cloudwatch-alerts"
 }

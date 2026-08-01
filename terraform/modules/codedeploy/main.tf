@@ -46,7 +46,10 @@ lifecycle {
 
   alarm_configuration {
     enabled = true
-    alarms  = [var.cloudwatch_alarm]
+    alarms  = [
+      var.cloudwatch_alarm,
+      var.unhealthy_hosts_alarm
+    ]
   }
 
   auto_rollback_configuration {

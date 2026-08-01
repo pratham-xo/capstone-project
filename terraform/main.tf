@@ -49,6 +49,7 @@ module "codedeploy" {
   blue_target_group_name  = "ecs-target-group"
   green_target_group_name = "green-target-group"
   cloudwatch_alarm = module.cloudwatch.alarm_name
+  unhealthy_hosts_alarm = module.cloudwatch.unhealthy_host_count_alarm_name
   s3_bucket_arn = module.codepipeline.s3_bucket_arn
 }
 

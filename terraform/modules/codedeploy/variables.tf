@@ -11,6 +11,8 @@ variable "blue_target_group_name" {}
 variable "green_target_group_name" {}
 
 variable "cloudwatch_alarm" {}
+variable "unhealthy_hosts_alarm" {
+}
 
 variable "ecs_service_arn" {}
 
