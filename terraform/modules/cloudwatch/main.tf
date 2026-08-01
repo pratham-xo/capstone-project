@@ -104,6 +104,7 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
          {
           id    = "m1"
           label = "Blue"
+          visible = false
         },
       ],
       [
@@ -116,6 +117,7 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
          {
           id    = "m2"
           label = "Green"
+          visible = false
         }
       ],[
     {
