@@ -41,7 +41,7 @@ resource "aws_lb_target_group" "aws_ecs_target_group" {
 
   health_check {
     enabled             = true
-    path                = "/"
+    path                = "/thisis-my-health-check"
     protocol            = "HTTP"
     healthy_threshold   = 2
     unhealthy_threshold = 2
