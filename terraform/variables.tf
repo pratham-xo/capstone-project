@@ -45,3 +45,16 @@ variable "SONAR_HOST_URL" {
 variable "alert_email" {
   
 }
+
+variable "domain_name" {
+  description = "The root domain name (e.g. yourdomain.com)"
+  type        = string
+}
+
+variable "record_name" {
+  description = "The subdomain/record to create (e.g. app.yourdomain.com)"
+  type        = string
+}
+
+variable "hosted_zone_id" {
+}

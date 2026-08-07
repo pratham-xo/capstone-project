@@ -16,6 +16,103 @@ resource "aws_iam_role" "codebuild_role" {
   })
 }
 
+resource "aws_iam_role" "codebuild_deploy_role" {
+  name = "capstone-codebuild-deploy-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [{
+      Effect = "Allow"
+
+      Principal = {
+        Service = "codebuild.amazonaws.com"
+      }
+
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+
+resource "aws_iam_policy" "codebuild_deploy_policy" {
+  name = "capstone-codebuild-deploy-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "ecs:RegisterTaskDefinition",
+          "ecs:UpdateService",
+          "ecs:DescribeServices",
+          "ecs:DescribeTaskDefinition"
+        ]
+
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "route53:ChangeResourceRecordSets",
+          "route53:ListResourceRecordSets"
+        ]
+
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "iam:PassRole"
+        ]
+
+        Resource = var.ecs_task_execution_role_arn
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+
+        Resource = "arn:aws:logs:ap-south-1:723951822972:log-group:/aws/codebuild/capstone-deploy:*"
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion",
+          "s3:GetBucketLocation",
+          "s3:PutObject"
+        ]
+
+        Resource = [
+          "arn:aws:s3:::capstone-pipeline-artifacts-*",
+          "arn:aws:s3:::capstone-pipeline-artifacts-*/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "codepipeline:PutJobSuccessResult",
+          "codepipeline:PutJobFailureResult"
+        ]
+
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 
 resource "aws_iam_policy" "codebuild_policy" {
 
@@ -95,6 +192,11 @@ resource "aws_iam_role_policy_attachment" "codebuild_role_policy_attachment" {
   policy_arn = aws_iam_policy.codebuild_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "codebuild_deploy_attach" {
+  role       = aws_iam_role.codebuild_deploy_role.name
+  policy_arn = aws_iam_policy.codebuild_deploy_policy.arn
+}
+
 resource "aws_cloudwatch_log_group" "codebuild" {
   name              = "/aws/codebuild/capstone-build"
   retention_in_days = 30
@@ -138,6 +240,77 @@ resource "aws_codebuild_project" "capstone_build" {
     environment_variable {
   name  = "SONAR_HOST_URL"
   value = var.SONAR_HOST_URL
+}
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      status = "ENABLED"
+    }
+  }
+}
+
+
+resource "aws_codebuild_project" "codebuild_deploy" {
+  name         = "capstone-deploy"
+  service_role = aws_iam_role.codebuild_deploy_role.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  source {
+    type      = "CODEPIPELINE"
+    buildspec = "deploy_buildspec.yaml"
+  }
+
+  environment {
+    compute_type = "BUILD_GENERAL1_SMALL"
+    image        = "aws/codebuild/standard:7.0"
+    type         = "LINUX_CONTAINER"
+
+    privileged_mode = false   # no docker needed for this stage
+
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = "ap-south-1"
+    }
+
+    environment_variable {
+      name  = "ECS_CLUSTER_NAME"
+      value = var.ecs_cluster_name
+    }
+
+    environment_variable {
+      name  = "HOSTED_ZONE_ID"
+      value = var.hosted_zone_id
+    }
+
+    environment_variable {
+      name  = "RECORD_NAME"
+      value = var.record_name
+    }
+
+    environment_variable {
+      name  = "ECR_REPOSITORY_URI"
+      value = var.ecr_repository_url
+    }
+
+    environment_variable {
+  name  = "blue_ALB_DNS"
+  value = var.blue_alb_dns
+}
+environment_variable {
+  name  = "blue_ALB_ZONE_ID"
+  value = var.blue_alb_zone_id
+}
+environment_variable {
+  name  = "green_ALB_DNS"
+  value = var.green_alb_dns
+}
+environment_variable {
+  name  = "green_ALB_ZONE_ID"
+  value = var.green_alb_zone_id
 }
   }
 

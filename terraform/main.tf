@@ -10,47 +10,58 @@ module "vpc" {
   db_subnet2_cidr      = var.db_subnet2_cidr
 }
 
-module "alb" {
+module "alb_blue" {
   source = "./modules/alb"
 
   vpc_id = module.vpc.vpc_id
-
+  name_prefix = "blue"
   public_sub_ids = [
     module.vpc.aws_public_subnet1,
     module.vpc.aws_public_subnet2
   ]
 }
 
+module "alb_green" {
+  source = "./modules/alb"
+  vpc_id = module.vpc.vpc_id
+  name_prefix = "green"
+  public_sub_ids = [
+    module.vpc.aws_public_subnet1,
+    module.vpc.aws_public_subnet2
+  ]
+}
+
+module "ecs_blue" {
+  source              = "./modules/ecs_services"
+  name_prefix         = "blue"
+  ecs_cluster_id      = module.ecs.ecs_cluster_id
+  image_uri           = "723951822972.dkr.ecr.ap-south-1.amazonaws.com/capstone-ecr:v1"
+  target_group_arn    = module.alb_blue.ecs_target_group_arn
+  execution_role_arn  = module.ecs.task_execution_arn
+  private_subnets     = [module.vpc.private_subnet1, module.vpc.private_subnet2]
+  ecs_sg_id           = module.ecs.ecs_sg
+}
+
+module "ecs_green" {
+  source              = "./modules/ecs_services"
+  name_prefix         = "green"
+  ecs_cluster_id      = module.ecs.ecs_cluster_id
+  image_uri           = "723951822972.dkr.ecr.ap-south-1.amazonaws.com/capstone-ecr:v1"
+  target_group_arn    = module.alb_green.ecs_target_group_arn
+  execution_role_arn  = module.ecs.task_execution_arn
+  private_subnets     = [module.vpc.private_subnet1, module.vpc.private_subnet2]
+  ecs_sg_id           = module.ecs.ecs_sg
+  
+}
+
 module "ecs" {
   source = "./modules/ecs"
-
   vpc_id = module.vpc.vpc_id
-
-  private_subnet  = module.vpc.aws_private_subnet1
-  private_subnet2 = module.vpc.aws_private_subnet2
-
-  target_group_arn   = module.alb.ecs_target_group_arn
-  alb_security_group = module.alb.alb_sg_name
+  alb_security_groups = [module.alb_blue.alb_sg_name, module.alb_green.alb_sg_name]
 }
 
 module "ecr" {
   source = "./modules/ecr"
-}
-
-module "codedeploy" {
-  source = "./modules/codedeploy"
-
-  ecs_cluster_name = module.ecs.ecs_cluster_name
-  ecs_service_name = module.ecs.ecs_service_name
-  ecs_service_arn = module.ecs.ecs_service_arn
-  task_definition_arn = module.ecs.task_definition_arn
-  listener_arn    = module.alb.listener_arn
-  test_listener_arn =  module.alb.test_listener_arn
-  blue_target_group_name  = "ecs-target-group"
-  green_target_group_name = "green-target-group"
-  cloudwatch_alarm = module.cloudwatch.alarm_name
-  unhealthy_hosts_alarm = module.cloudwatch.unhealthy_host_count_alarm_name
-  s3_bucket_arn = module.codepipeline.s3_bucket_arn
 }
 
 module "codebuild" {
@@ -60,6 +71,14 @@ module "codebuild" {
   ecr_repository_name = module.ecr.ecr_repository_name
   github_repo_url     = "https://github.com/pratham-xo/capstone-project.git"
   SONAR_HOST_URL = var.SONAR_HOST_URL
+  hosted_zone_id = var.hosted_zone_id
+  ecs_cluster_name = module.ecs.ecs_cluster_name
+  record_name = var.record_name
+  blue_alb_dns = module.alb_blue.alb_dns_name
+  blue_alb_zone_id = module.alb_blue.alb_zone_id
+  green_alb_dns = module.alb_green.alb_dns_name 
+  green_alb_zone_id = module.alb_green.alb_zone_id
+  ecs_task_execution_role_arn = module.ecs.task_execution_arn
 }
 
 module "codepipeline" {
@@ -71,14 +90,8 @@ module "codepipeline" {
   repository_owner = "pratham-xo"
   repository_name  = "capstone-project"
   branch_name      = "main"
-
   codebuild_project_name = module.codebuild.codebuild_project_name
-  codedeploy_app_name = module.codedeploy.codedeploy_app_name
-  codedeploy_deployment_group_name = module.codedeploy.deployment_group_name
-  codedeploy_arn = module.codedeploy.codedeploy_arn 
   codebuild_arn = module.codebuild.codebuild_arn
-  codedeploy_deployment_group_arn = module.codedeploy.codedeploy_deployment_group_arn
-  codedeploy_app_arn = module.codedeploy.codedeploy_arn
   ecs_task_execution_role_arn = module.ecs.task_execution_arn
 }
 
@@ -98,10 +111,18 @@ module "ssm" {
 
 module "cloudwatch" {
   source = "./modules/cloudwatch"
-  ALB_arn_suffix = module.alb.alb_suffix
-  target_group_arn_suffix = module.alb.target_group_arn_suffix
-  cluster_name = module.ecs.ecs_cluster_name
-  service_name = module.ecs.ecs_service_name
-  green_target_group_arn_suffix = module.alb.green_target_group_arn_suffix
-  alert_email = var.alert_email
+  ALB_arn_suffix           = module.alb_blue.alb_suffix
+  target_group_arn_suffix  = module.alb_blue.target_group_arn_suffix
+  cluster_name             = module.ecs.ecs_cluster_name
+  service_name             = module.ecs_blue.service_name
+  alert_email              = var.alert_email
+}
+
+
+module "route53" {
+  source = "./modules/route53"
+  domain_name  = var.domain_name
+  record_name  = var.record_name
+  alb_dns_name = module.alb_blue.alb_dns_name   # blue is initial prod
+  alb_zone_id  = module.alb_blue.alb_zone_id
 }

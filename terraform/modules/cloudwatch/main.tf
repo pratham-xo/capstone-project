@@ -108,18 +108,6 @@ resource "aws_cloudwatch_dashboard" "capstone_dashboard" {
         },
       ],
       [
-        ".",
-        ".",
-        "TargetGroup",
-        var.green_target_group_arn_suffix,
-        "LoadBalancer",
-        ".",
-         {
-          id    = "m2"
-          label = "Green"
-          visible = false
-        }
-      ],[
     {
       expression = "MAX([m1,m2])"
       label      = "Production Healthy Hosts"
@@ -298,7 +286,6 @@ resource "aws_cloudwatch_metric_alarm" "unhealthy_hosts" {
       period      = 60
       stat        = "Maximum"
       dimensions = {
-        TargetGroup  = var.green_target_group_arn_suffix
         LoadBalancer = var.ALB_arn_suffix
       }
     }

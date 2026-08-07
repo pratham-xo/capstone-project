@@ -1,3 +1,5 @@
-output "ecr_repo_url" {
-  value = module.ecr.ecr_repository_url
+
+
+output "name_servers" {
+  value = module.route53.name_servers
 }

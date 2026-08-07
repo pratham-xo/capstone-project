@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "pipeline_bucket" {
   bucket = "capstone-pipeline-artifacts-${random_string.suffix.result}"
+   force_destroy = true
 }
 
 resource "aws_s3_bucket_public_access_block" "artifact_bucket_public_access_block" {
@@ -254,23 +255,13 @@ resource "aws_codepipeline" "pipeline" {
     name     = "DeployToECS"
     category = "Deploy"
     owner    = "AWS"
-    provider = "CodeDeployToECS"
+    provider = "CodeBuild"
     version  = "1"
 
     input_artifacts = ["build_output"]
 
     configuration = {
-      ApplicationName                = var.codedeploy_app_name
-      DeploymentGroupName            = var.codedeploy_deployment_group_name
-
-      TaskDefinitionTemplateArtifact = "build_output"
-      TaskDefinitionTemplatePath     = "taskdef.json"
-
-      AppSpecTemplateArtifact        = "build_output"
-      AppSpecTemplatePath            = "appspec.yaml"
-
-      Image1ArtifactName             = "build_output"
-      Image1ContainerName            = "IMAGE1_NAME"
+      ProjectName = var.codebuild_project_name
     }
   }
 }
